@@ -1,5 +1,7 @@
 package com.example.geobird;
 
+import static androidx.core.content.ContextCompat.getSystemService;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,6 +17,8 @@ public class CanvasView extends View {
    private Paint paint;
    private Bitmap bitmap;
    private static final Random random = new Random();
+   private int topDelta = 0;
+   private int leftDelta = 0;
 
    public CanvasView(Context context) {
       super(context);
@@ -24,6 +28,11 @@ public class CanvasView extends View {
    public CanvasView(Context context, AttributeSet attrs) {
       super(context, attrs);
       init();
+   }
+
+   public void updateDeltas(int top, int left) {
+      topDelta += top;
+      leftDelta += left;
    }
 
    private void init() {
@@ -71,23 +80,6 @@ public class CanvasView extends View {
       // Rect rectangle = new Circle(100, 100, 300, 300);
       // Draw the rectangle on the canvas
       // canvas.drawRect(rectangle, paint);
-
-      int leftDelta = 0;
-      int topDelta = 0;
-
-      if (random.nextBoolean()) {
-         if (random.nextBoolean()) {
-            leftDelta += 100;
-         } else {
-            leftDelta += -100;
-         }
-      } else {
-         if (random.nextBoolean()) {
-            topDelta += 100;
-         } else {
-            topDelta += -100;
-         }
-      }
 
 
       canvas.drawBitmap(bitmap, leftDelta, topDelta, paint);
