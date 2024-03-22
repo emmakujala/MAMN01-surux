@@ -16,9 +16,10 @@ import java.util.Random;
 public class CanvasView extends View {
    private Paint paint;
    private Bitmap bitmap;
+   private Bitmap birdMap;
    private static final Random random = new Random();
-   private int topDelta = 0;
-   private int leftDelta = 0;
+   private float topDelta = 0;
+   private float leftDelta = 0;
 
    public CanvasView(Context context) {
       super(context);
@@ -30,7 +31,7 @@ public class CanvasView extends View {
       init();
    }
 
-   public void updateDeltas(int top, int left) {
+   public void updateDeltas(float top, float left) {
       topDelta += top;
       leftDelta += left;
    }
@@ -38,56 +39,19 @@ public class CanvasView extends View {
    private void init() {
       paint = new Paint();
 
-//      Bitmap originalBitmap = BitmapFactory.decodeResource(getResources(), R.raw.img);
-//
-//      // Get the dimensions of the screen
-//      int screenWidth = getResources().getDisplayMetrics().widthPixels;
-//      int screenHeight = getResources().getDisplayMetrics().heightPixels;
-//
-//      // Calculate the desired aspect ratio
-//      float desiredAspectRatio = (float) screenWidth / screenHeight;
-//
-//      // Calculate the new dimensions while preserving the aspect ratio
-//      int newWidth, newHeight;
-//      float bitmapAspectRatio = (float) originalBitmap.getWidth() / originalBitmap.getHeight();
-//
-//      if (bitmapAspectRatio > desiredAspectRatio) {
-//         // Landscape image
-//         newWidth = screenWidth;
-//         newHeight = (int) (newWidth / bitmapAspectRatio);
-//      } else {
-//         // Portrait or square image
-//         newHeight = screenHeight;
-//         newWidth = (int) (newHeight * bitmapAspectRatio);
-//      }
-//
-//      // Create the scaled Bitmap
-//      bitmap = Bitmap.createScaledBitmap(originalBitmap, newWidth, newHeight, true);
-      //originalBitmap.recycle();
+      birdMap = BitmapFactory.decodeResource(getResources(), R.raw.bird);
       bitmap = BitmapFactory.decodeResource(getResources(), R.raw.img);
-      // Recycle the original Bitmap to free up memory
-
    }
 
    @Override
    protected void onDraw(Canvas canvas) {
       super.onDraw(canvas);
 
-      // Set the paint color to red
-      paint.setColor(Color.RED);
-
-      // Create a rectangle object
-      // Rect rectangle = new Circle(100, 100, 300, 300);
-      // Draw the rectangle on the canvas
-      // canvas.drawRect(rectangle, paint);
-
-
       canvas.drawBitmap(bitmap, leftDelta, topDelta, paint);
 
-      int centerX = getWidth() / 2; // Center horizontally
-      int centerY = getHeight() / 2; // Center vertically
-      int radius = 100; // Radius of the circle (adjust as needed)
-      canvas.drawCircle(centerX, centerY, radius, paint);
+      int centerX = (getWidth() / 2) - (birdMap.getWidth() / 2); // Center horizontally
+      int centerY = (getHeight() / 2) - (birdMap.getHeight() / 2); // Center vertically
+      canvas.drawBitmap(birdMap, centerX, centerY, paint);
    }
 
    public static int getRandomInRange(int min, int max) {
