@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.View;
@@ -20,6 +21,7 @@ public class CanvasView extends View {
    private static final Random random = new Random();
    private float topDelta = 0;
    private float leftDelta = 0;
+   private Bitmap oriBridMap;
 
    public CanvasView(Context context) {
       super(context);
@@ -36,9 +38,18 @@ public class CanvasView extends View {
       leftDelta += left;
    }
 
+   public void rotate(float degrees) {
+      Matrix matrix = new Matrix();
+      matrix.postRotate(degrees);
+      Bitmap scaledBitmap = Bitmap.createScaledBitmap(oriBridMap, oriBridMap.getWidth(), oriBridMap.getHeight(), true);
+      birdMap = Bitmap.createBitmap(scaledBitmap, 0, 0, scaledBitmap.getWidth(), scaledBitmap.getHeight(), matrix, true);
+   }
+
    private void init() {
       paint = new Paint();
 
+      // could replace this by storing or handling the previous degrees passed in
+      oriBridMap = BitmapFactory.decodeResource(getResources(), R.raw.bird);
       birdMap = BitmapFactory.decodeResource(getResources(), R.raw.bird);
       bitmap = BitmapFactory.decodeResource(getResources(), R.raw.img);
    }

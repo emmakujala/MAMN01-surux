@@ -22,7 +22,7 @@ import kotlin.reflect.KCallable;
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
     private SensorManager sensorManager;
     private Sensor sensor;
-    private static final float ROTATION_THRESHOLD = 2.0f;
+    private static final float ROTATION_THRESHOLD = 1.5f;
     private final Handler handler = new Handler();
 
 
@@ -49,7 +49,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     public void click(View v) {
         CanvasView canvasView = findViewById(R.id.canvasView);
-        canvasView.updateDeltas(-100, 0);
+        canvasView.updateDeltas(0, 0);
+        TaskScheduler.scheduleTask(() -> {});
         canvasView.invalidate();
     }
 
@@ -59,21 +60,37 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         float angularSpeedY = event.values[1];
         CanvasView canvasView = findViewById(R.id.canvasView);
         float speed = 0.4f;
-        // rotation around the X axis (upwards/downwards)
-        if (angularSpeedX > ROTATION_THRESHOLD) {
+        if (angularSpeedX < -ROTATION_THRESHOLD && angularSpeedY > ROTATION_THRESHOLD) {
+            // up to the left
+            canvasView.rotate(45);
+            TaskScheduler.updateTask(() -> canvasView.updateDeltas(speed, -speed));
+        } else if (angularSpeedX < -ROTATION_THRESHOLD && angularSpeedY < -ROTATION_THRESHOLD) {
+            // up to the right
+            canvasView.rotate(-45);
+            TaskScheduler.updateTask(() -> canvasView.updateDeltas(speed, speed));
+        } else if (angularSpeedX > ROTATION_THRESHOLD && angularSpeedY > ROTATION_THRESHOLD) {
+            // down to the left
+            canvasView.rotate(135);
+            TaskScheduler.updateTask(() -> canvasView.updateDeltas(-speed, -speed));
+        } else if (angularSpeedX > ROTATION_THRESHOLD && angularSpeedY < -ROTATION_THRESHOLD) {
+            // down to the right
+            canvasView.rotate(-135);
+            TaskScheduler.updateTask(() -> canvasView.updateDeltas(-speed, speed));
+        } else if (angularSpeedX > ROTATION_THRESHOLD) { // rotation around the X axis (upwards/downwards)
             // phone is rotated downwards
+            canvasView.rotate(180);
             TaskScheduler.updateTask(() -> canvasView.updateDeltas(-speed, 0));
         } else if (angularSpeedX < -ROTATION_THRESHOLD) {
             // phone is rotated upwards
+            canvasView.rotate(0);
             TaskScheduler.updateTask(() -> canvasView.updateDeltas(speed, 0));
-        }
-
-        // rotation around the Y axis (right/left)
-        if (angularSpeedY > ROTATION_THRESHOLD) {
+        } else if (angularSpeedY > ROTATION_THRESHOLD) { // rotation around the Y axis (right/left)
             // phone is rotated left
+            canvasView.rotate(90);
             TaskScheduler.updateTask(() -> canvasView.updateDeltas(0, -speed));
         } else if (angularSpeedY < -ROTATION_THRESHOLD) {
             // phone is rotated right
+            canvasView.rotate(-90);
             TaskScheduler.updateTask(() -> canvasView.updateDeltas(0, speed));
         }
         canvasView.invalidate();
