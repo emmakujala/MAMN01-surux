@@ -7,6 +7,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -52,6 +53,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         canvasView.updateDeltas(0, 0);
         TaskScheduler.scheduleTask(() -> {});
         canvasView.invalidate();
+        Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+        MainActivity.this.startActivity(intent);
     }
 
     @Override
