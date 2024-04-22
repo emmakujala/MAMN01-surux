@@ -11,8 +11,6 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.os.Handler;
-import android.telecom.Call;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -61,8 +59,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         canvasView.updateDeltas(0, 0);
         TaskScheduler.updateTask(() -> {});
         canvasView.invalidate();
-        // Intent intent = new Intent(MainActivity.this, MapsActivity.class);
-        // MainActivity.this.startActivity(intent);
+        Intent intent = new Intent(MainActivity.this, InfoPageActivity.class);
+        MainActivity.this.startActivity(intent);
     }
 
     public void land() {
