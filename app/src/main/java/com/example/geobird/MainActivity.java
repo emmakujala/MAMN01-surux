@@ -2,10 +2,8 @@ package com.example.geobird;
 
 
 import androidx.appcompat.app.AppCompatActivity;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
+import androidx.core.view.GestureDetectorCompat;
+
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
@@ -16,15 +14,16 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.telecom.Call;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
-
-import kotlin.reflect.KCallable;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
     private SensorManager sensorManager;
     private Sensor sensor;
     private static final float ROTATION_THRESHOLD = 1.5f;
-    private final Handler handler = new Handler();
+    private GestureDetectorCompat mDetector;
+    private boolean isFlying = true;
+    private long lastMove = System.currentTimeMillis();
 
 
     @Override
@@ -34,6 +33,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         sensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
         TaskScheduler.scheduleTask(() -> {});
+        mDetector = new GestureDetectorCompat(this, new SwipeDetector(this));
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event){
+        if (this.mDetector.onTouchEvent(event)) {
+            return true;
+        }
+        return super.onTouchEvent(event);
     }
 
     @Override
@@ -51,16 +59,38 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public void click(View v) {
         CanvasView canvasView = findViewById(R.id.canvasView);
         canvasView.updateDeltas(0, 0);
-        TaskScheduler.scheduleTask(() -> {});
+        TaskScheduler.updateTask(() -> {});
         canvasView.invalidate();
-        Intent intent = new Intent(MainActivity.this, MapsActivity.class);
-        MainActivity.this.startActivity(intent);
+        // Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+        // MainActivity.this.startActivity(intent);
+    }
+
+    public void land() {
+        isFlying = false;
+        CanvasView canvasView = findViewById(R.id.canvasView);
+        TaskScheduler.pause();
+        canvasView.landed();
+        canvasView.invalidate();
+    }
+
+    public void takeOff() {
+        isFlying = true;
+        CanvasView canvasView = findViewById(R.id.canvasView);
+        canvasView.takeOff();
+        canvasView.invalidate();
+        TaskScheduler.resume();
     }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
+        long timestamp = System.currentTimeMillis();
+        if (isFlying == false) {
+            return;
+        }
         float angularSpeedX = event.values[0];
         float angularSpeedY = event.values[1];
+        float angularSpeedZ = event.values[2];
+        Log.d("Gyro: ", angularSpeedX + " | " + angularSpeedY + " | " + angularSpeedZ);
         CanvasView canvasView = findViewById(R.id.canvasView);
         float speed = 0.4f;
         if (angularSpeedX < -ROTATION_THRESHOLD && angularSpeedY > ROTATION_THRESHOLD) {
@@ -97,31 +127,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             TaskScheduler.updateTask(() -> canvasView.updateDeltas(0, speed));
         }
         canvasView.invalidate();
+        lastMove = System.currentTimeMillis();
     }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {}
-}
-
-
-
-class TaskScheduler {
-    private static final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-    private static final AtomicReference<Runnable> taskRef = new AtomicReference<>();
-
-    public static void scheduleTask(Runnable task) {
-        taskRef.set(task);
-        executor.scheduleAtFixedRate(TaskScheduler::executeTask, 0, 15, TimeUnit.MILLISECONDS);
-    }
-
-    public static void updateTask(Runnable newTask) {
-        taskRef.set(newTask);
-    }
-
-    private static void executeTask() {
-        Runnable task = taskRef.get();
-        if (task != null) {
-            task.run();
-        }
-    }
 }
