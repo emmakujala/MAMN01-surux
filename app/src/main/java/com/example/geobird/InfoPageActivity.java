@@ -8,8 +8,6 @@ import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
-import android.util.Log;
-import android.view.HapticFeedbackConstants;
 import android.os.Vibrator;
 import android.view.View;
 import android.widget.ImageView;
@@ -57,7 +55,7 @@ public class InfoPageActivity extends AppCompatActivity implements SensorEventLi
     @Override
     public void onSensorChanged(SensorEvent event) {
         long now = System.currentTimeMillis();
-        if (now - lastMove < 1000) {
+        if (now - lastMove < 500) {
             return;
         }
         float angularSpeedX = event.values[0];
@@ -90,7 +88,7 @@ public class InfoPageActivity extends AppCompatActivity implements SensorEventLi
     }
 
     private void rotate(float angle) {
-        ImageView arrow = findViewById(R.id.arrow);
+        ImageView arrow = findViewById(R.id.bird);
         arrow.setRotation(angle);
         lastMove = System.currentTimeMillis();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
