@@ -8,6 +8,7 @@
     android:layout_height="match_parent"
     tools:context=".InfoPageActivity">
 
+    <!-- https://stackoverflow.com/questions/6533942/adding-gif-image-in-an-imageview-in-android -->
     <pl.droidsonroids.gif.GifImageView
         android:id="@+id/gifImageView"
         android:layout_width="279dp"
@@ -66,5 +67,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/gifImageView" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="check"
+        android:text="Button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/startbtn" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

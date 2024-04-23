@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -24,6 +25,7 @@ public class InfoPageActivity extends AppCompatActivity implements SensorEventLi
     private static final float ROTATION_THRESHOLD = 1.5f;
     private long lastMove = System.currentTimeMillis();
     private Vibrator vibe;
+    private SoundMeter sound;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +40,11 @@ public class InfoPageActivity extends AppCompatActivity implements SensorEventLi
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         sensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
         vibe = getSystemService(Vibrator.class);
+        try {
+            sound = new SoundMeter();
+        } catch (Exception e) {
+            Log.d("ERROR", "Unable to create sound meter: " + e.getMessage());
+        }
     }
 
     @Override
@@ -104,6 +111,11 @@ public class InfoPageActivity extends AppCompatActivity implements SensorEventLi
             // could maybe change to EFFECT_CLICK
             vibe.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_TICK));
         }
-        // go to game activity
+        sound.stop();
+    }
+
+    // for testing
+    public void check(View v) {
+        Log.d("SOUND", "" + sound.getAmp());
     }
 }
