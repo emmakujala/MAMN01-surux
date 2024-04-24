@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:background="#74D7E5"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".InfoPageActivity">
+
+    <!-- https://stackoverflow.com/questions/6533942/adding-gif-image-in-an-imageview-in-android -->
+    <pl.droidsonroids.gif.GifImageView
+        android:id="@+id/gifImageView"
+        android:layout_width="279dp"
+        android:layout_height="219dp"
+        android:src="@drawable/demo"
+        app:layout_constraintBottom_toTopOf="@+id/birdText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+    <ImageView
+        android:id="@+id/bird"
+        android:layout_width="109dp"
+        android:layout_height="126dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginBottom="20dp"
+        android:src="@drawable/bird"
+        app:layout_constraintBottom_toTopOf="@+id/startbtn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/birdText" />
+
+    <Button
+        android:id="@+id/startbtn"
+        android:layout_width="122dp"
+        android:layout_height="57dp"
+        android:onClick="start"
+        android:text="Start the game"
+        android:textColor="#000000"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="240dp"
+        android:layout_height="81dp"
+        android:layout_marginTop="10dp"
+        android:text="Controll the bird by flicking the phone in a direciton"
+        android:textColor="#000000"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/gifImageView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/birdText"
+        android:layout_width="242dp"
+        android:layout_height="83dp"
+        android:layout_marginTop="20dp"
+        android:text="Here you can practice moving the bird as in the video"
+        android:textColor="#000000"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/bird"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/gifImageView" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="check"
+        android:text="Button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/startbtn" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
