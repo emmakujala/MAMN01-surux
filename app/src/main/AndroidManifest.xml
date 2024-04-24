@@ -6,6 +6,9 @@
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="com.discos2.example.permission.MAPS_RECEIVE" />
+
 
     <application
         android:allowBackup="true"
@@ -31,7 +34,7 @@
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDP3RtGo-DE4YdLruTTLMtz4MWJ-wW77-A" />
+            android:value="AIzaSyCjuxSfSauMdST1t3R_Usc7VYKEPYz7lGg" />
 
         <activity
             android:name=".MapsActivity"

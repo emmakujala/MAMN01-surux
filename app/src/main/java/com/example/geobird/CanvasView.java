@@ -57,7 +57,6 @@ public class CanvasView extends View {
    @Override
    protected void onDraw(Canvas canvas) {
       super.onDraw(canvas);
-
       canvas.drawBitmap(bitmap, leftDelta, topDelta, paint);
 
       int centerX = (getWidth() / 2) - (birdMap.getWidth() / 2); // Center horizontally

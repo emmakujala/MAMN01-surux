@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        float angularSpeedX = event.values[0];
+        /**float angularSpeedX = event.values[0];
         float angularSpeedY = event.values[1];
         CanvasView canvasView = findViewById(R.id.canvasView);
         float speed = 0.4f;
@@ -97,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             TaskScheduler.updateTask(() -> canvasView.updateDeltas(0, speed));
         }
         canvasView.invalidate();
+         */
     }
 
     @Override
@@ -105,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
 
 
-class TaskScheduler {
+/**class TaskScheduler {
     private static final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
     private static final AtomicReference<Runnable> taskRef = new AtomicReference<>();
 
@@ -125,3 +126,4 @@ class TaskScheduler {
         }
     }
 }
+ */
