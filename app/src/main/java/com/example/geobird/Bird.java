@@ -13,6 +13,7 @@ import com.google.android.gms.maps.model.GroundOverlayOptions;
 import com.google.android.gms.maps.model.LatLng;
 
 import android.os.Handler;
+import android.util.Log;
 
 public class Bird  {
 
@@ -35,44 +36,55 @@ public class Bird  {
     }
 
 
+    /**
+     *              0
+     *         315  | 45
+     *            \ | /
+     *     270 ---- * ---- 90
+     *            / | \
+     *         225  |  135
+     *             180
+     * */
     public LatLng updatePos(String dir, double speed) {
-        System.out.println("updatePos");
+        Log.d("DIR", "Curr dir: " + dir);
         switch (dir) {
             case "upperLeft":
                 birdOverlayObject.setBearing(315);
-                birdLat -= speed;
+                birdLat += speed;
                 birdLong -= speed;
                 break;
             case "upperRight":
                 birdOverlayObject.setBearing(45);
                 birdLat += speed;
-                birdLong -= speed;
+                birdLong += speed;
                 break;
             case "downLeft":
                 birdOverlayObject.setBearing(225);
                 birdLat -= speed;
-                birdLong += speed;
+                birdLong -= speed;
                 break;
             case "downRight":
-                birdOverlayObject.setBearing(115);
-                birdLat += speed;
+                birdOverlayObject.setBearing(135);
+                birdLat -= speed;
                 birdLong += speed;
                 break;
             case "down":
                 birdOverlayObject.setBearing(180);
-                birdLat += speed;
+                birdLat -= speed;
                 break;
             case "up":
                 birdOverlayObject.setBearing(0);
-                birdLat -= speed;
+                birdLat += speed;
                 break;
             case "left":
                 birdOverlayObject.setBearing(270);
                 birdLong -= speed;
                 break;
-            default:
+            case "right":
                 birdOverlayObject.setBearing(90);
                 birdLong += speed;
+                break;
+            default:
                 break;
         }
 
@@ -83,9 +95,9 @@ public class Bird  {
     public void updateBird(String dir, double speed) {
         Handler mainHandler = new Handler(Looper.getMainLooper());
         mainHandler.post(() -> {
-        birdPos = updatePos(dir,speed);
-        birdOverlayObject.setPosition(birdPos);
-    });
+            birdPos = updatePos(dir, speed);
+            birdOverlayObject.setPosition(birdPos);
+        });
     }
 
     public LatLng getBirdPos() {

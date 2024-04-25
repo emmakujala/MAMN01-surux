@@ -32,7 +32,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private SensorManager sensorManager;
     private Sensor sensor;
     private static final float ROTATION_THRESHOLD = 1.5f;
-    private final Handler handler = new Handler();
     private final Scheduler scheduler = new Scheduler(70);
 
     Bird bird;
@@ -58,30 +57,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         double speed = 0.01;
 
         if (isReady()) {
+            // some of the diagonal ones are different from infopage really not sure why
             if (angularSpeedX < -ROTATION_THRESHOLD && angularSpeedY > ROTATION_THRESHOLD) {
-                // up to the left
-                scheduler.updateTask(() ->  bird.updateBird("upperLeft", speed));
-            } else if (angularSpeedX < -ROTATION_THRESHOLD && angularSpeedY < -ROTATION_THRESHOLD) {
                 // up to the right
-                scheduler.updateTask(() -> bird.updateBird("upperRight",speed));
+                scheduler.updateTask(() ->  bird.updateBird("upperRight", speed));
+            } else if (angularSpeedX < -ROTATION_THRESHOLD && angularSpeedY < -ROTATION_THRESHOLD) {
+                // up to the left
+                scheduler.updateTask(() -> bird.updateBird("upperLeft", speed));
             } else if (angularSpeedX > ROTATION_THRESHOLD && angularSpeedY > ROTATION_THRESHOLD) {
-                // down to the left
-                scheduler.updateTask(() ->   bird.updateBird("downLeft", speed));
-            } else if (angularSpeedX > ROTATION_THRESHOLD && angularSpeedY < -ROTATION_THRESHOLD) {
                 // down to the right
-                scheduler.updateTask(() ->  bird.updateBird("downRight", speed));
+                scheduler.updateTask(() ->   bird.updateBird("downRight", speed));
+            } else if (angularSpeedX > ROTATION_THRESHOLD && angularSpeedY < -ROTATION_THRESHOLD) {
+                // down to the left
+                scheduler.updateTask(() ->  bird.updateBird("downLeft", speed));
             } else if (angularSpeedX > ROTATION_THRESHOLD) { // rotation around the X axis (upwards/downwards)
                 // phone is rotated downwards
                 scheduler.updateTask(() ->  bird.updateBird("down", speed));
             } else if (angularSpeedX < -ROTATION_THRESHOLD) {
                 // phone is rotated upwards
-                scheduler.updateTask(() -> bird.updateBird("up",speed));
+                scheduler.updateTask(() -> bird.updateBird("up", speed));
             } else if (angularSpeedY > ROTATION_THRESHOLD) { // rotation around the Y axis (right/left)
-                // phone is rotated left
-                scheduler.updateTask(() ->  bird.updateBird("left",speed));
-            } else if (angularSpeedY < -ROTATION_THRESHOLD) {
                 // phone is rotated right
-                scheduler.updateTask(() -> bird.updateBird("right", speed));
+                scheduler.updateTask(() ->  bird.updateBird("right", speed));
+            } else if (angularSpeedY < -ROTATION_THRESHOLD) {
+                // phone is rotated left
+                scheduler.updateTask(() -> bird.updateBird("left", speed));
             }
         }
     }
@@ -112,8 +112,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
         bird = new Bird(59,18,mMap, getResources());
         mMap.moveCamera(CameraUpdateFactory.newLatLng(bird.getBirdPos()));
-
-        // scheduler.updateTask(() -> bird.updateBird("up", 0.1));
     }
 
     private boolean isReady() {

@@ -42,7 +42,7 @@ public class InfoPageActivity extends AppCompatActivity implements SensorEventLi
         sensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
         vibe = getSystemService(Vibrator.class);
         try {
-            sound = new SoundMeter();
+            //sound = new SoundMeter();
         } catch (Exception e) {
             Log.d("ERROR", "Unable to create sound meter: " + e.getMessage());
         }
@@ -69,16 +69,16 @@ public class InfoPageActivity extends AppCompatActivity implements SensorEventLi
         float angularSpeedX = event.values[0];
         float angularSpeedY = event.values[1];
         if (angularSpeedX < -ROTATION_THRESHOLD && angularSpeedY > ROTATION_THRESHOLD) {
-            // up to the left
+            // up to the right
             rotate(45);
         } else if (angularSpeedX < -ROTATION_THRESHOLD && angularSpeedY < -ROTATION_THRESHOLD) {
-            // up to the right
+            // up to the left
             rotate(-45);
         } else if (angularSpeedX > ROTATION_THRESHOLD && angularSpeedY > ROTATION_THRESHOLD) {
-            // down to the left
+            // down to the right
             rotate(135);
         } else if (angularSpeedX > ROTATION_THRESHOLD && angularSpeedY < -ROTATION_THRESHOLD) {
-            // down to the right
+            // down to the left
             rotate(-135);
         } else if (angularSpeedX > ROTATION_THRESHOLD) { // rotation around the X axis (upwards/downwards)
             // phone is rotated downwards
@@ -87,10 +87,10 @@ public class InfoPageActivity extends AppCompatActivity implements SensorEventLi
             // phone is rotated upwards
             rotate(0);
         } else if (angularSpeedY > ROTATION_THRESHOLD) { // rotation around the Y axis (right/left)
-            // phone is rotated left
+            // phone is rotated right
             rotate(90);
         } else if (angularSpeedY < -ROTATION_THRESHOLD) {
-            // phone is rotated right
+            // phone is rotated left
             rotate(-90);
         }
     }
@@ -112,13 +112,17 @@ public class InfoPageActivity extends AppCompatActivity implements SensorEventLi
             // could maybe change to EFFECT_CLICK
             vibe.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_TICK));
         }
-        sound.stop();
+        if (sound != null) {
+            sound.stop();
+        }
         Intent intent = new Intent(InfoPageActivity.this, MapsActivity.class);
         InfoPageActivity.this.startActivity(intent);
     }
 
     // for testing
     public void check(View v) {
-        Log.d("SOUND", "" + sound.getAmp());
+        if (sound != null) {
+            Log.d("SOUND", "" + sound.getAmp());
+        }
     }
 }
