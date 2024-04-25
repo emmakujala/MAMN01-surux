@@ -16,7 +16,6 @@ import android.os.Handler;
 import android.util.Log;
 
 public class Bird  {
-
     private double birdLat;
     private double birdLong;
     private LatLng birdPos;
@@ -35,10 +34,9 @@ public class Bird  {
         birdOverlayObject = mMap.addGroundOverlay(bird);
     }
 
-
     /**
      *              0
-     *         315  | 45
+     *         315  |  45
      *            \ | /
      *     270 ---- * ---- 90
      *            / | \
@@ -46,7 +44,6 @@ public class Bird  {
      *             180
      * */
     public LatLng updatePos(String dir, double speed) {
-        Log.d("DIR", "Curr dir: " + dir);
         switch (dir) {
             case "upperLeft":
                 birdOverlayObject.setBearing(315);

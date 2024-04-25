@@ -9,22 +9,17 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Vibrator;
+import android.util.Log;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.GroundOverlay;
-import com.google.android.gms.maps.model.GroundOverlayOptions;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.example.geobird.databinding.ActivityMapsBinding;
 
+import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, SensorEventListener {
     private GoogleMap mMap;
@@ -33,8 +28,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Sensor sensor;
     private static final float ROTATION_THRESHOLD = 1.5f;
     private final Scheduler scheduler = new Scheduler(70);
-
     Bird bird;
+    private CustomVibrator<String> vibe;
+    private boolean canMove = true;
+    private final Handler handler = new Handler();
+    private final Executor exe = Executors.newSingleThreadScheduledExecutor();
+    private boolean isTimerRunning = false;
+    private DirectionMapper maper = new DirectionMapper();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +48,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        vibe = new CustomVibrator<>(getSystemService(Vibrator.class));
     }
 
     @Override
@@ -55,35 +56,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         float angularSpeedX = event.values[0];
         float angularSpeedY = event.values[1];
         double speed = 0.01;
-
-        if (isReady()) {
-            // some of the diagonal ones are different from infopage really not sure why
-            if (angularSpeedX < -ROTATION_THRESHOLD && angularSpeedY > ROTATION_THRESHOLD) {
-                // up to the right
-                scheduler.updateTask(() ->  bird.updateBird("upperRight", speed));
-            } else if (angularSpeedX < -ROTATION_THRESHOLD && angularSpeedY < -ROTATION_THRESHOLD) {
-                // up to the left
-                scheduler.updateTask(() -> bird.updateBird("upperLeft", speed));
-            } else if (angularSpeedX > ROTATION_THRESHOLD && angularSpeedY > ROTATION_THRESHOLD) {
-                // down to the right
-                scheduler.updateTask(() ->   bird.updateBird("downRight", speed));
-            } else if (angularSpeedX > ROTATION_THRESHOLD && angularSpeedY < -ROTATION_THRESHOLD) {
-                // down to the left
-                scheduler.updateTask(() ->  bird.updateBird("downLeft", speed));
-            } else if (angularSpeedX > ROTATION_THRESHOLD) { // rotation around the X axis (upwards/downwards)
-                // phone is rotated downwards
-                scheduler.updateTask(() ->  bird.updateBird("down", speed));
-            } else if (angularSpeedX < -ROTATION_THRESHOLD) {
-                // phone is rotated upwards
-                scheduler.updateTask(() -> bird.updateBird("up", speed));
-            } else if (angularSpeedY > ROTATION_THRESHOLD) { // rotation around the Y axis (right/left)
-                // phone is rotated right
-                scheduler.updateTask(() ->  bird.updateBird("right", speed));
-            } else if (angularSpeedY < -ROTATION_THRESHOLD) {
-                // phone is rotated left
-                scheduler.updateTask(() -> bird.updateBird("left", speed));
+        if (isReady() && canMove) {
+            /**
+            canMove = false;
+            // startTimer();
+            exe.execute(() -> {
+                try {
+                    Thread.sleep(300);
+                    canMove = true;
+                } catch (InterruptedException e) {
+                    Log.d("ERROR", "Sleep problem: " + e.getMessage());
+                }
+            });*/
+            if (
+                angularSpeedX > ROTATION_THRESHOLD ||
+                angularSpeedX < -ROTATION_THRESHOLD ||
+                angularSpeedY > ROTATION_THRESHOLD ||
+                angularSpeedY < -ROTATION_THRESHOLD
+            ) {
+                String dir = maper.direction(angularSpeedX, angularSpeedY);
+                Log.d("Dir", dir);
+                vibe.vibrateMedium(dir);
+                scheduler.updateTask(() -> bird.updateBird(dir, speed));
             }
         }
+
     }
 
     @Override
@@ -96,6 +93,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onPause() {
         super.onPause();
         sensorManager.unregisterListener(this);
+    }
+
+    private void startTimer() {
+        if (!isTimerRunning) {
+            canMove = false;
+            isTimerRunning = true;
+            handler.postDelayed(() -> {
+                isTimerRunning = false;
+                canMove = true;
+            }, 500);
+        }
+    }
+
+    private void stopTimer() {
+        handler.removeCallbacksAndMessages(null);
+        isTimerRunning = false;
     }
 
     /**

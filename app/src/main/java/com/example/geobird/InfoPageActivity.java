@@ -25,8 +25,9 @@ public class InfoPageActivity extends AppCompatActivity implements SensorEventLi
     private Sensor sensor;
     private static final float ROTATION_THRESHOLD = 1.5f;
     private long lastMove = System.currentTimeMillis();
-    private Vibrator vibe;
+    private CustomVibrator<Float> vibe;
     private SoundMeter sound;
+    private DirectionMapper mapper = new DirectionMapper();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +41,7 @@ public class InfoPageActivity extends AppCompatActivity implements SensorEventLi
         });
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         sensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
-        vibe = getSystemService(Vibrator.class);
+        vibe = new CustomVibrator<>(getSystemService(Vibrator.class));
         try {
             //sound = new SoundMeter();
         } catch (Exception e) {
@@ -68,30 +69,42 @@ public class InfoPageActivity extends AppCompatActivity implements SensorEventLi
         }
         float angularSpeedX = event.values[0];
         float angularSpeedY = event.values[1];
-        if (angularSpeedX < -ROTATION_THRESHOLD && angularSpeedY > ROTATION_THRESHOLD) {
-            // up to the right
-            rotate(45);
-        } else if (angularSpeedX < -ROTATION_THRESHOLD && angularSpeedY < -ROTATION_THRESHOLD) {
-            // up to the left
-            rotate(-45);
-        } else if (angularSpeedX > ROTATION_THRESHOLD && angularSpeedY > ROTATION_THRESHOLD) {
-            // down to the right
-            rotate(135);
-        } else if (angularSpeedX > ROTATION_THRESHOLD && angularSpeedY < -ROTATION_THRESHOLD) {
-            // down to the left
-            rotate(-135);
-        } else if (angularSpeedX > ROTATION_THRESHOLD) { // rotation around the X axis (upwards/downwards)
-            // phone is rotated downwards
-            rotate(180);
-        } else if (angularSpeedX < -ROTATION_THRESHOLD) {
-            // phone is rotated upwards
-            rotate(0);
-        } else if (angularSpeedY > ROTATION_THRESHOLD) { // rotation around the Y axis (right/left)
-            // phone is rotated right
-            rotate(90);
-        } else if (angularSpeedY < -ROTATION_THRESHOLD) {
-            // phone is rotated left
-            rotate(-90);
+
+        if (
+            angularSpeedX > ROTATION_THRESHOLD ||
+            angularSpeedX < -ROTATION_THRESHOLD ||
+            angularSpeedY > ROTATION_THRESHOLD ||
+            angularSpeedY < -ROTATION_THRESHOLD
+        ) {
+            String dir = mapper.direction(angularSpeedX, angularSpeedY);
+            switch (dir) {
+                case "right":
+                    rotate(90);
+                    break;
+                case "upperRight":
+                    rotate(45);
+                    break;
+                case "up":
+                    rotate(0);
+                    break;
+                case "upperLeft":
+                    rotate(-45);
+                    break;
+                case "left":
+                    rotate(-90);
+                    break;
+                case "downLeft":
+                    rotate(-135);
+                    break;
+                case "down":
+                    rotate(180);
+                    break;
+                case "downRight":
+                    rotate(135);
+                    break;
+                default:
+                    Log.d("ERROR", "Unknown direction: " + dir);
+            }
         }
     }
 
@@ -99,19 +112,14 @@ public class InfoPageActivity extends AppCompatActivity implements SensorEventLi
         ImageView arrow = findViewById(R.id.bird);
         arrow.setRotation(angle);
         lastMove = System.currentTimeMillis();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            vibe.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK));
-        }
+        vibe.vibrateMedium(angle);
     }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {}
 
     public void start(View v) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            // could maybe change to EFFECT_CLICK
-            vibe.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_TICK));
-        }
+        vibe.vibrateLow();
         if (sound != null) {
             sound.stop();
         }
