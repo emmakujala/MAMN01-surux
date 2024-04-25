@@ -85,7 +85,6 @@ public class Bird  {
         mainHandler.post(() -> {
         birdPos = updatePos(dir,speed);
         birdOverlayObject.setPosition(birdPos);
-        bird.bearing(315);
     });
     }
 

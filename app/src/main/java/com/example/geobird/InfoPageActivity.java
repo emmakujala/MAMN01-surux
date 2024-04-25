@@ -1,6 +1,7 @@
 package com.example.geobird;
 
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -112,6 +113,8 @@ public class InfoPageActivity extends AppCompatActivity implements SensorEventLi
             vibe.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_TICK));
         }
         sound.stop();
+        Intent intent = new Intent(InfoPageActivity.this, MapsActivity.class);
+        InfoPageActivity.this.startActivity(intent);
     }
 
     // for testing

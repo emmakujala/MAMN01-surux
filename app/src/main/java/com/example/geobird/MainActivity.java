@@ -9,8 +9,6 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
-import kotlin.reflect.KCallable;
-
 public class MainActivity extends AppCompatActivity  {
     private GestureDetectorCompat mDetector;
 
@@ -30,10 +28,7 @@ public class MainActivity extends AppCompatActivity  {
     }
 
     public void click(View v) {
-        CanvasView canvasView = findViewById(R.id.canvasView);
-        canvasView.updateDeltas(0, 0);
-        canvasView.invalidate();
-        Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+        Intent intent = new Intent(MainActivity.this, InfoPageActivity.class);
         MainActivity.this.startActivity(intent);
     }
 }
