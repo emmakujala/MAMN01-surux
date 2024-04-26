@@ -96,8 +96,9 @@ public class Bird  {
             birdOverlayObject.setPosition(birdPos);
         });
     }
-
-    public LatLng getBirdPos() {
-        return this.birdPos;
+    public LatLng getBirdPos() {return this.birdPos;}
+    public double getBirdLat() {
+        return this.birdLat;
     }
+    public double getBirdLong() {return this.birdLong;}
 }

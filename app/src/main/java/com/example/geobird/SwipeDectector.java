@@ -1,8 +1,12 @@
 package com.example.geobird;
 
+import android.app.Activity;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
 // copy paste from https://developer.android.com/develop/ui/views/touch-and-input/gestures/detector#java
 /**
@@ -13,15 +17,17 @@ class SwipeDetector extends GestureDetector.SimpleOnGestureListener {
     private static final String DEBUG_TAG = "Gestures";
     private final int threshold = 100;
     private final int velocity_threshold = 100;
-    private final MainActivity main;
+    private final Activity main;
+    GameController controller;
 
     /**
      * Pass the main activity so when a swipe is detected it can land and takeoff the bird
      * might want to rework this
      * */
-    public SwipeDetector(MainActivity main) {
+    public SwipeDetector(Activity main, GameController controller) {
         super();
         this.main = main;
+        this.controller = controller;
     }
 
     @Override
@@ -44,9 +50,13 @@ class SwipeDetector extends GestureDetector.SimpleOnGestureListener {
                 if (yDiff > 0) {
                     // swiped down
                     Log.d(DEBUG_TAG, "Swiped down");
+                     controller.onLanding();
+
+
                 } else {
                     // swiped up
                     Log.d(DEBUG_TAG, "Swiped up");
+                    controller.onLiftOff();
                 }
                 return true;
             }

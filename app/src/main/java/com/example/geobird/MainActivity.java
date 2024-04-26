@@ -16,16 +16,16 @@ public class MainActivity extends AppCompatActivity  {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mDetector = new GestureDetectorCompat(this, new SwipeDetector(this));
+        //mDetector = new GestureDetectorCompat(this, new SwipeDetector(this));
     }
 
-    @Override
+    /**@Override
     public boolean onTouchEvent(MotionEvent event){
         if (this.mDetector.onTouchEvent(event)) {
             return true;
         }
         return super.onTouchEvent(event);
-    }
+    }*/
 
     public void click(View v) {
         Intent intent = new Intent(MainActivity.this, InfoPageActivity.class);
