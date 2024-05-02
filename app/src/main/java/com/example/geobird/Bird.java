@@ -43,7 +43,7 @@ public class Bird  {
      *         225  |  135
      *             180
      * */
-    public LatLng updatePos(String dir, double speed) {
+    public LatLng updatePos(String dir, Double speed) {
         switch (dir) {
             case "upperLeft":
                 birdOverlayObject.setBearing(315);
@@ -89,10 +89,10 @@ public class Bird  {
         return birdPos;
     }
 
-    public void updateBird(String dir, double speed) {
+    public void updateBird(String dir, Booster booster) {
         Handler mainHandler = new Handler(Looper.getMainLooper());
         mainHandler.post(() -> {
-            birdPos = updatePos(dir, speed);
+            birdPos = updatePos(dir, booster.getSpeed());
             birdOverlayObject.setPosition(birdPos);
         });
     }

@@ -44,10 +44,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private final Handler handler = new Handler();
     private final Executor exe = Executors.newSingleThreadScheduledExecutor();
     private boolean isTimerRunning = false;
-    private DirectionMapper maper = new DirectionMapper();
     private GamePlay game;
     private String currentGoal;
     private GestureDetectorCompat mDetector;
+    public Booster booster;
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,12 +64,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         vibe = new CustomVibrator<>(getSystemService(Vibrator.class));
         //Google Maps overridar typ alla events så måste ha en separat view ovanpå för att registrera touchevents
         View mapOverlay = findViewById(R.id.mapOverlay);
-        mapOverlay.setOnTouchListener((v, event) -> mDetector.onTouchEvent(event));
-
+        mapOverlay.setOnTouchListener((v, event) -> this.onTouchEvent(event));
+        try {
+            booster = new Booster();
+        } catch (Exception e) {
+            Log.d("ERROR", e.toString());
+        }
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            Log.d("HERE", "DOWN");
+            canMove = false;
+            booster.charge();
+        } else if (event.getAction() == MotionEvent.ACTION_UP) {
+            Log.d("HERE", "UP");
+            canMove = true;
+            booster.release();
+        }
         return mDetector.onTouchEvent(event);
     }
 
@@ -77,9 +90,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onSensorChanged(SensorEvent event) {
         float angularSpeedX = event.values[0];
         float angularSpeedY = event.values[1];
-        double speed = 0.02;
         if (isReady() && canMove) {
-            keepFlying(angularSpeedX, angularSpeedY, speed);
+            keepFlying(angularSpeedX, angularSpeedY);
 
 
             /**
@@ -98,17 +110,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-    private void keepFlying(float angularSpeedX, float angularSpeedY, double speed) {
+    private void keepFlying(float angularSpeedX, float angularSpeedY) {
         if (
                 angularSpeedX > ROTATION_THRESHOLD ||
                         angularSpeedX < -ROTATION_THRESHOLD ||
                         angularSpeedY > ROTATION_THRESHOLD ||
                         angularSpeedY < -ROTATION_THRESHOLD
         ) {
-            String dir = maper.direction(angularSpeedX, angularSpeedY);
+            String dir = DirectionMapper.direction(angularSpeedX, angularSpeedY);
             Log.d("Dir", dir);
             vibe.vibrateMedium(dir);
-            scheduler.updateTask(() -> bird.updateBird(dir, speed));
+            scheduler.updateTask(() -> bird.updateBird(dir, booster));
         }
     }
 

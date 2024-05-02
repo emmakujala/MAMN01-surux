@@ -3,6 +3,7 @@ package com.example.geobird;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.CountDownTimer;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -44,6 +45,9 @@ public class GameController {
     }
 
     public void gameOver() {
+        if (activity instanceof MapsActivity) {
+            ((MapsActivity) activity).booster.stop();
+        }
         Intent intent = new Intent(activity, GameOverActivity.class);
         intent.putExtra("points", game.getPoints());
         activity.startActivity(intent);
