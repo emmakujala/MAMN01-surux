@@ -6,6 +6,7 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Rect;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -21,11 +22,14 @@ import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.example.geobird.databinding.ActivityMapsBinding;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.VisibleRegion;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -48,6 +52,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private String currentGoal;
     private GestureDetectorCompat mDetector;
     public Booster booster;
+    public static double swedenLongMin;
+    public static double swedenLatMin;
+    public static double swedenLongMax;
+    public static double swedenLatMax;
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -157,7 +165,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        bird = new Bird(59,18,mMap, getResources());
+        bird = new Bird(59,18, mMap, getResources());
         LatLng swedenCenter = new LatLng(62.0, 15.0);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(bird.getBirdPos()));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(swedenCenter, 5)); // Adjust the zoom level as needed
@@ -174,6 +182,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setLatLngBoundsForCameraTarget(swedenBounds);
         mDetector = new GestureDetectorCompat(this, new SwipeDetector(this, new GameController(this,scheduler,game,bird,goal,points, timer)));
 
+        // to acquire the magical out of bounds cords for the wrap around function for the bird
+        mMap.setOnCameraMoveListener(() -> {
+            VisibleRegion visibleRegion = mMap.getProjection().getVisibleRegion();
+            LatLngBounds latLngBounds = visibleRegion.latLngBounds;
+            LatLng topLeft = mMap.getProjection().fromScreenLocation(new android.graphics.Point(0, 0));
+            LatLng bottomRight = mMap.getProjection().fromScreenLocation(new android.graphics.Point(mMap.getProjection().toScreenLocation(latLngBounds.northeast).x, mMap.getProjection().toScreenLocation(latLngBounds.southwest).y));
+
+            swedenLongMin = topLeft.longitude;
+            swedenLongMax = bottomRight.longitude;
+            swedenLatMin = bottomRight.latitude;
+            swedenLatMax = topLeft.latitude;
+            String topLeftCord = "Latitude: " + topLeft.latitude + ", Longitude: " + topLeft.longitude;
+            String bottomRightCord = "Latitude: " + bottomRight.latitude + ", Longitude: " + bottomRight.longitude;
+            Log.d(DEBUG_TAG, "Top Left: " + topLeftCord);
+            Log.d(DEBUG_TAG, "Bottom Right: " + bottomRightCord);
+        });
     }
 
     private boolean isReady() {

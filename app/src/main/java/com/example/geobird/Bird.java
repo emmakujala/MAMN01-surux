@@ -84,9 +84,58 @@ public class Bird  {
             default:
                 break;
         }
-
+        wrapAroundBird();
         birdPos = new LatLng(birdLat, birdLong);
         return birdPos;
+    }
+
+    private void wrapAroundBird() {
+        // note this is a fairly ugly fix might want to find a better way
+        /**
+         * The idea is by transforming to a regular cord system with bottom left corner
+         * being 0, 0 we can use mod to get the birds position then translate back
+         * to normal cords for the location on map to make it like the bird is flying around the screen
+         *
+         * This is the normal box where sweden is in the middle
+         *      69 +--------+ 69
+         *         |        |
+         *         |        |
+         *         |        |
+         *         |        |
+         *     55  +--------+ 55
+         *        10        24
+         *
+         * We transform to (numbers not accurate)
+         *      13 +--------+ 13
+         *         |        |
+         *         |        |<-- Bird
+         * Bird <--|        |
+         *         |        |
+         *       0 +--------+ 0
+         *        0        14
+         *
+         *  14 will in this case be longMod and 13 will be latMod
+         * */
+        // long = x, lat = y
+        double latMod = MapsActivity.swedenLatMax - MapsActivity.swedenLatMin;
+        double longMod = MapsActivity.swedenLongMax - MapsActivity.swedenLongMin;
+        double transLat = birdLat - MapsActivity.swedenLatMin;
+        double transLong = birdLong - MapsActivity.swedenLongMin;
+
+        // https://stackoverflow.com/questions/4412179/best-way-to-make-javas-modulus-behave-like-it-should-with-negative-numbers/4412200#4412200
+        if (transLong < 0 || transLong > longMod) {
+            // too far left or right
+            double wrappedLong = (transLong % longMod + longMod) % longMod;
+            birdLong = wrappedLong + MapsActivity.swedenLongMin;
+            birdLat = (latMod - transLat) + MapsActivity.swedenLatMin;
+        } else if (transLat < 0 || transLat > latMod) {
+            // too far down or up
+            double wrappedLat = (transLat % latMod + latMod) % latMod;
+            birdLat = wrappedLat + MapsActivity.swedenLatMin;
+            birdLong = (longMod - transLong) + MapsActivity.swedenLongMin;
+        } else {
+            Log.d("ERROR", "Translated long and lat failed to check side, Lat: " + transLat + ", Long: " + transLong);
+        }
     }
 
     public void updateBird(String dir, Booster booster) {
