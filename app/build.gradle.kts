@@ -44,4 +44,5 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     implementation("com.google.android.gms:play-services-maps:18.2.0")
     implementation("pl.droidsonroids.gif:android-gif-drawable:1.2.17")
+
 }

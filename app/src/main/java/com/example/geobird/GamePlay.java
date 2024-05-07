@@ -1,9 +1,11 @@
 package com.example.geobird;
 
 
+import static com.example.geobird.LocationParser.parseLocations;
+
+import android.content.Context;
 import android.util.Log;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -18,8 +20,9 @@ public class GamePlay {
 
     private int points = 0;
 
-    public GamePlay() {
-        addLocations();
+    public GamePlay(Context context) {
+        //addLocations();
+        locationMap = parseLocations(context);
 
     }
 

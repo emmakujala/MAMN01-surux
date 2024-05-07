@@ -56,7 +56,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         sensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
         binding = ActivityMapsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        this.game = new GamePlay();
+        this.game = new GamePlay(this);
         this.currentGoal = game.randomCity();
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);

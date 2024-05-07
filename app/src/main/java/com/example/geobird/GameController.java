@@ -51,7 +51,7 @@ public class GameController {
     }
 
    public void timer() {
-       new CountDownTimer(30000,1000) {
+       new CountDownTimer(60000,1000) {
            @Override
            public void onTick(long millisUntilFinished) {
                 timer.setText(Long.toString(millisUntilFinished / 1000));
