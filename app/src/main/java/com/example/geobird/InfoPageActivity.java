@@ -6,9 +6,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.View;
@@ -26,8 +24,7 @@ public class InfoPageActivity extends AppCompatActivity implements SensorEventLi
     private static final float ROTATION_THRESHOLD = 1.5f;
     private long lastMove = System.currentTimeMillis();
     private CustomVibrator<Float> vibe;
-    private SoundMeter sound;
-    private DirectionMapper mapper = new DirectionMapper();
+    private Booster sound;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +73,7 @@ public class InfoPageActivity extends AppCompatActivity implements SensorEventLi
             angularSpeedY > ROTATION_THRESHOLD ||
             angularSpeedY < -ROTATION_THRESHOLD
         ) {
-            String dir = mapper.direction(angularSpeedX, angularSpeedY);
+            String dir = DirectionMapper.direction(angularSpeedX, angularSpeedY);
             switch (dir) {
                 case "right":
                     rotate(90);
@@ -125,12 +122,5 @@ public class InfoPageActivity extends AppCompatActivity implements SensorEventLi
         }
         Intent intent = new Intent(InfoPageActivity.this, MapsActivity.class);
         InfoPageActivity.this.startActivity(intent);
-    }
-
-    // for testing
-    public void check(View v) {
-        if (sound != null) {
-            Log.d("SOUND", "" + sound.getAmp());
-        }
     }
 }

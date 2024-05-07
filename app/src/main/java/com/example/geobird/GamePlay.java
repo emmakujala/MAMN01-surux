@@ -17,6 +17,8 @@ public class GamePlay {
     String currentGoal;
     double goalLat;
     double goalLong;
+    private int prevIndex = -1;
+    private final Random generator = new Random();
 
     private int points = 0;
 
@@ -41,9 +43,13 @@ public class GamePlay {
     }
 
     public String randomCity() {
-        Random generator = new Random();
         Object[] values = locationMap.keySet().toArray();
-        currentGoal = (String) values[generator.nextInt(values.length)];
+        int index = generator.nextInt(values.length);
+        while (index == prevIndex) {
+            index = generator.nextInt(values.length);
+        }
+        prevIndex = index;
+        currentGoal = (String) values[index];
         goalLat = locationMap.get(currentGoal)[0];
         goalLong = locationMap.get(currentGoal)[1];
         return currentGoal;

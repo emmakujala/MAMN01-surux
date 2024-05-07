@@ -5,12 +5,17 @@ import android.util.Log;
 
 import java.io.File;
 
-public class SoundMeter {
+public class Booster {
 
     private MediaRecorder recorder = new MediaRecorder();
     private final File soundFile = File.createTempFile("geobirdsound", "mp3");
+    private boolean charging = false;
+    private long startTime;
+    private long accumulated = 0;
+    private double speedBoost = 0;
+    private final double baseSpeed = 0.02;
 
-    public SoundMeter() throws Exception {
+    public Booster() throws Exception {
         if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.S) {
             Log.d("ERROR", "SDK VERSION IS TO LOW RIP");
             throw new Exception("SDK VERSION IS TO LOW TO USE MEDIA RECORDER");
@@ -23,6 +28,43 @@ public class SoundMeter {
 
         // todo might want to start it with a function call instead of in constructor
         recorder.start();   // Recording is now started
+    }
+
+    public void charge() {
+        charging = true;
+        startTime = System.currentTimeMillis();
+    }
+
+    public void release() {
+        // to avoid any problems when we get a double up event
+        if (charging == false) {
+            return;
+        }
+        charging = false;
+        double delta = (System.currentTimeMillis() - startTime);
+        double res = (double) (accumulated / (delta * 500));
+        accumulated = 0;
+        Log.d("BOOST", "" + res);
+        speedBoost = res;
+    }
+
+    public double getSpeed() {
+        if (charging) {
+            int level = getAmp();
+            Log.d("BOOST", "Level: " + level);
+            if (level > 10000) {
+                accumulated += level;
+            }
+            return baseSpeed;
+        }
+
+        Log.d("BOOST", "Speed: " + speedBoost);
+        if (speedBoost < 0.0) {
+            return baseSpeed;
+        }
+        // todo maybe better falloff
+        speedBoost -= 0.008;
+        return baseSpeed + speedBoost;
     }
 
     public void stop() {
@@ -42,7 +84,7 @@ public class SoundMeter {
         }
     }
 
-    public float getAmp() {
+    private int getAmp() {
         if (recorder == null) {
             Log.d("ERROR", "Attempted to get amplitude after SoundMeter has been stopped");
         }

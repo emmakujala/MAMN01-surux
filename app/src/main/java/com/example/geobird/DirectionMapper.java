@@ -4,7 +4,7 @@ import android.util.Log;
 
 public class DirectionMapper {
 
-    public String direction(float x, float y) {
+    public static String direction(float x, float y) {
         x *= -1f;
         Log.d("CORDS, X | Y",   x + " | " + y);
         double rad = Math.atan(x / y);
@@ -32,7 +32,7 @@ public class DirectionMapper {
         return "";
     }
 
-    private double absoluteAngle(double rad, float x, float y) {
+    private static double absoluteAngle(double rad, float x, float y) {
         double angle = Math.toDegrees(rad);
         if (x > 0 && y > 0) {
             Log.d("Quadrant", "1");

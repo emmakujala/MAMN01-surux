@@ -5,9 +5,6 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-
 // copy paste from https://developer.android.com/develop/ui/views/touch-and-input/gestures/detector#java
 /**
  * Custom class to detect a downwards or upwards swipe, currently only calls main.land and main.takeoff
