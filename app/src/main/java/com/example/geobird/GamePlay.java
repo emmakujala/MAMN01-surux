@@ -13,7 +13,7 @@ import java.util.Random;
 public class GamePlay {
 
     private static final String DEBUG_TAG = "latlong";
-    Map<String, double[]> locationMap = new HashMap<>();
+    Map<String, double[]> locationMap;
     String currentGoal;
     double goalLat;
     double goalLong;
@@ -21,7 +21,6 @@ public class GamePlay {
     private int points = 0;
 
     public GamePlay(Context context) {
-        //addLocations();
         locationMap = parseLocations(context);
 
     }
@@ -67,5 +66,18 @@ public class GamePlay {
 
     public String getPoints() {
         return Integer.toString(this.points);
+    }
+
+    public void calculatePoints(double birdLat, double birdLong) {
+        double deltaLat = Math.abs(birdLat - goalLat);
+        double deltaLong = Math.abs(birdLong - goalLong);
+
+        if (deltaLong < 0.5 && deltaLat < 0.5) {
+            this.points += 10;
+        } else if (deltaLong < 1.0 && deltaLat < 1.0) {
+            this.points += 5;
+        } else if (deltaLong < 1.5 && deltaLat < 1.5) {
+            this.points += 1;
+        }
     }
 }

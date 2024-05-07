@@ -24,8 +24,11 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.example.geobird.databinding.ActivityMapsBinding;
+import com.google.android.gms.maps.model.AdvancedMarker;
+import com.google.android.gms.maps.model.AdvancedMarkerOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -160,7 +163,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         points.setText("0");
         goal.setText(currentGoal);
         mMap.setLatLngBoundsForCameraTarget(swedenBounds);
-        mDetector = new GestureDetectorCompat(this, new SwipeDetector(this, new GameController(this,scheduler,game,bird,goal,points, timer)));
+        Marker marker = mMap.addMarker(new AdvancedMarkerOptions()
+                .position(new LatLng(game.goalLat, game.goalLong)));
+        marker.setVisible(false);
+        mDetector = new GestureDetectorCompat(this, new SwipeDetector(this, new GameController(this,scheduler,game,bird,goal,points, timer, marker)));
+
 
     }
 

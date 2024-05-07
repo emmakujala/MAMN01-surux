@@ -6,6 +6,9 @@ import android.os.CountDownTimer;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+
 public class GameController {
 
     private final Scheduler scheduler;
@@ -15,9 +18,12 @@ public class GameController {
     private final TextView gView;
     private final TextView timer;
 
+
+    private final Marker marker;
+
     private final Activity activity;
 
-    public GameController(Activity activity, Scheduler scheduler, GamePlay game, Bird bird, TextView gView, TextView pView, TextView timer) {
+    public GameController(Activity activity, Scheduler scheduler, GamePlay game, Bird bird, TextView gView, TextView pView, TextView timer, Marker marker) {
         this.scheduler = scheduler;
         this.game = game;
         this.bird = bird;
@@ -25,21 +31,31 @@ public class GameController {
         this.gView = gView;
         this.timer = timer;
         this.activity = activity;
+        this.marker = marker;
         timer();
 
     }
 
     public void onLanding() {
         scheduler.pause();
-        if (game.isCorrectLocation(bird.getBirdLat(), bird.getBirdLong())) {
+        marker.setPosition(new LatLng(game.goalLat,game.goalLong));
+        marker.setVisible(true);
+        game.calculatePoints(bird.getBirdLat(), bird.getBirdLong());
+        pView.setText(game.getPoints());
+        gView.setText(game.randomCity());
+        bird.setHasLanded(true);
+        /**if (game.isCorrectLocation(bird.getBirdLat(), bird.getBirdLong())) {
             game.increasePoints();
             pView.setText(game.getPoints());
             gView.setText(game.randomCity());
-        }
+        }*/
+
 
     }
 
     public void onLiftOff() {
+        bird.setHasLanded(false);
+        marker.setVisible(false);
         scheduler.resume();
     }
 
@@ -47,6 +63,7 @@ public class GameController {
         Intent intent = new Intent(activity, GameOverActivity.class);
         intent.putExtra("points", game.getPoints());
         activity.startActivity(intent);
+        activity.finish();
 
     }
 

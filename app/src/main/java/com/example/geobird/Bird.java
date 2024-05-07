@@ -22,6 +22,8 @@ public class Bird  {
     public GroundOverlayOptions bird;
     public GroundOverlay birdOverlayObject;
 
+    private boolean hasLanded;
+
     public Bird(double birdLat, double birdLong, GoogleMap mMap, Resources resources) {
         this.birdLat = birdLat;
         this.birdLong = birdLong;
@@ -32,6 +34,7 @@ public class Bird  {
                 .position(birdPos, 100000f, 100000f)
                 .bearing(0);
         birdOverlayObject = mMap.addGroundOverlay(bird);
+        this.hasLanded = false;
     }
 
     /**
@@ -91,14 +94,20 @@ public class Bird  {
 
     public void updateBird(String dir, double speed) {
         Handler mainHandler = new Handler(Looper.getMainLooper());
-        mainHandler.post(() -> {
-            birdPos = updatePos(dir, speed);
-            birdOverlayObject.setPosition(birdPos);
-        });
+        if (!hasLanded) {
+            mainHandler.post(() -> {
+                birdPos = updatePos(dir, speed);
+                birdOverlayObject.setPosition(birdPos);
+            });
+        }
     }
     public LatLng getBirdPos() {return this.birdPos;}
     public double getBirdLat() {
         return this.birdLat;
     }
     public double getBirdLong() {return this.birdLong;}
+
+    public boolean hasLanded() {return this.hasLanded;}
+
+    public void setHasLanded(boolean bool) {this.hasLanded = bool;}
 }
