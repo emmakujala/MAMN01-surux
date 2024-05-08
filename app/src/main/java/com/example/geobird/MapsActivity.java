@@ -31,11 +31,8 @@ import com.google.android.gms.maps.model.AdvancedMarker;
 import com.google.android.gms.maps.model.AdvancedMarkerOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-<<<<<<< HEAD
 import com.google.android.gms.maps.model.Marker;
-=======
 import com.google.android.gms.maps.model.VisibleRegion;
->>>>>>> origin/main
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
