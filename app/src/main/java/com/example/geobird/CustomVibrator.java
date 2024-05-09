@@ -41,10 +41,17 @@ public class CustomVibrator<T> {
         }
     }
 
-    public void testVibrate() {
+    public void vibrateDoubleClick() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             // could maybe change to EFFECT_CLICK
             vibe.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_DOUBLE_CLICK));
+        }
+    }
+
+    public void vibrateHeavyClick() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            // could maybe change to EFFECT_CLICK
+            vibe.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_HEAVY_CLICK));
         }
     }
 }

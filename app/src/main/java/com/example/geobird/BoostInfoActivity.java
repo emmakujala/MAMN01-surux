@@ -6,6 +6,8 @@ import android.os.Vibrator;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewPropertyAnimator;
+import android.widget.ImageView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,6 +18,8 @@ import androidx.core.view.WindowInsetsCompat;
 public class BoostInfoActivity extends AppCompatActivity {
     private Booster booster;
     private CustomVibrator vibe;
+    private final Scheduler scheduler = new Scheduler(100);
+    private boolean canBoost = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,12 +42,36 @@ public class BoostInfoActivity extends AppCompatActivity {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            if (canBoost == false) {
+                return super.onTouchEvent(event);
+            }
+            scheduler.updateTask(() -> {});
+            findViewById(R.id.bird).animate().translationY(0);
             booster.charge();
-            booster.getSpeed(vibe::testVibrate);
+            scheduler.updateTask(() -> booster.getSpeed(vibe::vibrateDoubleClick));
         } else if (event.getAction() == MotionEvent.ACTION_UP) {
+            if (canBoost == false) {
+                return super.onTouchEvent(event);
+            }
             booster.release();
+            ViewPropertyAnimator ani = findViewById(R.id.bird).animate();
+            if (booster.getSpeed(() -> {}) > 0.03) {
+                vibe.vibrateMedium();
+                ani.translationY(-1500);
+            }
+            canBoost = false;
+            scheduler.updateTask(() -> boostRelease(ani));
         }
         return super.onTouchEvent(event);
+    }
+
+    private void boostRelease(ViewPropertyAnimator ani) {
+        if (booster.getSpeed(() -> {}) > 0.03) {
+            return;
+        }
+        scheduler.updateTask(() -> {});
+        ani.translationY(0);
+        canBoost = true;
     }
 
     public void backFunc(View v) {

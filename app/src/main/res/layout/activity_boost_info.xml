@@ -37,7 +37,7 @@
         android:shadowDx="5"
         android:shadowDy="5"
         android:shadowRadius="5"
-        android:text="Welcome! \n\n"
+        android:text="Welcome! \n\nHere you can practice boosting the speed of the bird by holding a finger down on the screen and blowing in the microphone then release your finger and the bird will fly to the top of the screen. After a while it will return down when the boost is done and you can boost again."
         android:textAlignment="center"
         android:textColor="#FFFFFF"
         android:textSize="20sp"
