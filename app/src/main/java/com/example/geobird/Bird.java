@@ -23,8 +23,9 @@ public class Bird  {
     public GroundOverlay birdOverlayObject;
 
     private boolean hasLanded;
+    private final CustomVibrator<String> vibe;
 
-    public Bird(double birdLat, double birdLong, GoogleMap mMap, Resources resources) {
+    public Bird(double birdLat, double birdLong, GoogleMap mMap, Resources resources, CustomVibrator<String> vibe) {
         this.birdLat = birdLat;
         this.birdLong = birdLong;
         this.birdPos = new LatLng(birdLat,birdLong);
@@ -35,6 +36,7 @@ public class Bird  {
                 .bearing(0);
         birdOverlayObject = mMap.addGroundOverlay(bird);
         this.hasLanded = false;
+        this.vibe = vibe;
     }
 
     /**
@@ -146,7 +148,7 @@ public class Bird  {
 
         if (!hasLanded) {
             mainHandler.post(() -> {
-                birdPos = updatePos(dir, booster.getSpeed(() -> {}));
+                birdPos = updatePos(dir, booster.getSpeed(vibe::vibrateDoubleClick));
                 birdOverlayObject.setPosition(birdPos);
             });
         }

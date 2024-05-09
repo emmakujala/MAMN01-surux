@@ -35,7 +35,10 @@ public class Booster {
         startTime = System.currentTimeMillis();
     }
 
-    public void release() {
+    /**
+     * Takes a function to run if the user got a speedboost from the blowing like haptic feedback
+     * */
+    public void release(Runnable func) {
         // to avoid any problems when we get a double up event
         if (charging == false) {
             return;
@@ -46,6 +49,9 @@ public class Booster {
         accumulated = 0;
         Log.d("BOOST", "" + res);
         speedBoost = res;
+        if (res > 0) {
+            func.run();
+        }
     }
 
     /**
@@ -74,14 +80,15 @@ public class Booster {
     }
 
     public void stop() {
-        if (recorder == null) {
-            Log.d("ERROR", "Attempted to stop SoundMeter when it already has been stopped");
-        }
-        recorder.stop();
-        recorder.reset();   // You can reuse the object by going back to setAudioSource() step
-        recorder.release(); // Now the object cannot be reused
-        recorder = null;
         try {
+            if (recorder == null) {
+                Log.d("ERROR", "Attempted to stop SoundMeter when it already has been stopped");
+            } else {
+                recorder.stop();
+                recorder.reset();   // You can reuse the object by going back to setAudioSource() step
+                recorder.release(); // Now the object cannot be reused
+                recorder = null;
+            }
             if (soundFile.delete() == false) {
                 Log.d("ERROR", "Unable to delete sound file path should be: " + soundFile.getAbsolutePath());
             }

@@ -53,10 +53,9 @@ public class BoostInfoActivity extends AppCompatActivity {
             if (canBoost == false) {
                 return super.onTouchEvent(event);
             }
-            booster.release();
+            booster.release(vibe::vibrateMedium);
             ViewPropertyAnimator ani = findViewById(R.id.bird).animate();
             if (booster.getSpeed(() -> {}) > 0.03) {
-                vibe.vibrateMedium();
                 ani.translationY(-1500);
             }
             canBoost = false;
@@ -75,10 +74,15 @@ public class BoostInfoActivity extends AppCompatActivity {
     }
 
     public void backFunc(View v) {
+        booster.stop();
         finish();
     }
 
     public void nextPage(View v) {
+        // todo
+        // booster is not stopped so pretty sure it is leaking resources now but
+        // I have no idea how to fix it since constructor is not called for this activity
+        // again if finnish is called so whatever :)
         Intent intent = new Intent(BoostInfoActivity.this, InfoPageActivity.class);
         BoostInfoActivity.this.startActivity(intent);
     }

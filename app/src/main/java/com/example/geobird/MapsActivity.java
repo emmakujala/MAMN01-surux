@@ -46,7 +46,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final float ROTATION_THRESHOLD = 1.5f;
     private final Scheduler scheduler = new Scheduler(70);
     Bird bird;
-    private CustomVibrator<String> vibe;
+    public CustomVibrator<String> vibe;
     private boolean canMove = true;
     private final Handler handler = new Handler();
     private final Executor exe = Executors.newSingleThreadScheduledExecutor();
@@ -91,7 +91,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             booster.charge();
         } else if (event.getAction() == MotionEvent.ACTION_UP) {
             canMove = true;
-            booster.release();
+            booster.release(vibe::vibrateMedium);
         }
         return mDetector.onTouchEvent(event);
     }
@@ -167,7 +167,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        bird = new Bird(59,18, mMap, getResources());
+        bird = new Bird(59,18, mMap, getResources(), vibe);
         LatLng swedenCenter = new LatLng(62.0, 15.0);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(bird.getBirdPos()));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(swedenCenter, 5)); // Adjust the zoom level as needed
