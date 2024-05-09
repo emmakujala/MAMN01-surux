@@ -50,6 +50,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private boolean canMove = true;
     private final Handler handler = new Handler();
     private final Executor exe = Executors.newSingleThreadScheduledExecutor();
+    private GameController gameController;
     private boolean isTimerRunning = false;
     private GamePlay game;
     private String currentGoal;
@@ -86,11 +87,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            Log.d("HERE", "DOWN");
             canMove = false;
             booster.charge();
         } else if (event.getAction() == MotionEvent.ACTION_UP) {
-            Log.d("HERE", "UP");
             canMove = true;
             booster.release();
         }
@@ -186,7 +185,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Marker marker = mMap.addMarker(new AdvancedMarkerOptions()
                 .position(new LatLng(game.goalLat, game.goalLong)));
         marker.setVisible(false);
-        mDetector = new GestureDetectorCompat(this, new SwipeDetector(this, new GameController(this,scheduler,game,bird,goal,points, timer, marker)));
+        gameController = new GameController(this, scheduler, game, bird, goal, points, timer, marker);
+        mDetector = new GestureDetectorCompat(this, new SwipeDetector(() -> gameController.onLanding(), () -> gameController.onLiftOff()));
 
 
         // to acquire the magical out of bounds cords for the wrap around function for the bird

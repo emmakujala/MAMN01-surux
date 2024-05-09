@@ -48,12 +48,18 @@ public class Booster {
         speedBoost = res;
     }
 
-    public double getSpeed() {
+    /**
+     * Call this to charge up the booster when charge() has been called prior
+     * Or to get the current speed after release(), Takes a func to call when charging
+     * to do something (like haptic feedback or something)
+     * */
+    public double getSpeed(Runnable func) {
         if (charging) {
             int level = getAmp();
             Log.d("BOOST", "Level: " + level);
             if (level > 10000) {
                 accumulated += level;
+                func.run();
             }
             return baseSpeed;
         }

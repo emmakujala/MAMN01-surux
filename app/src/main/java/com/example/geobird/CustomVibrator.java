@@ -40,4 +40,11 @@ public class CustomVibrator<T> {
             vibe.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_TICK));
         }
     }
+
+    public void testVibrate() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            // could maybe change to EFFECT_CLICK
+            vibe.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_DOUBLE_CLICK));
+        }
+    }
 }

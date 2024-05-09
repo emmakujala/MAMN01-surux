@@ -1,9 +1,12 @@
 package com.example.geobird;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -21,9 +24,15 @@ public class GoalInfoActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
     }
 
-    public void onClick(View v) {
-        onBackPressed();
+    public void backFunc(View v) {
+        finish();
+    }
+
+    public void nextPage(View v) {
+        Intent intent = new Intent(GoalInfoActivity.this, LandingInfoActivity.class);
+        GoalInfoActivity.this.startActivity(intent);
     }
 }

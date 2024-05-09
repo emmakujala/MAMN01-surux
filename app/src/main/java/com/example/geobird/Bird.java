@@ -146,7 +146,8 @@ public class Bird  {
 
         if (!hasLanded) {
             mainHandler.post(() -> {
-                birdPos = updatePos(dir, booster.getSpeed());
+                // todo change lambda to be somethign else
+                birdPos = updatePos(dir, booster.getSpeed(() -> {}));
                 birdOverlayObject.setPosition(birdPos);
             });
         }
