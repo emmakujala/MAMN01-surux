@@ -20,11 +20,11 @@
 
     <Button
         android:id="@+id/button"
-        android:layout_width="109dp"
-        android:layout_height="61dp"
+        android:layout_width="122dp"
+        android:layout_height="57dp"
+        android:textColor="#FFFFFF"
         android:onClick="click"
         android:text="Start "
-        android:textColor="#FFFFFF"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
