@@ -31,11 +31,11 @@ import com.google.android.gms.maps.model.AdvancedMarker;
 import com.google.android.gms.maps.model.AdvancedMarkerOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-<<<<<<< HEAD
+
 import com.google.android.gms.maps.model.Marker;
-=======
+
 import com.google.android.gms.maps.model.VisibleRegion;
->>>>>>> origin/main
+
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -62,6 +62,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public static double swedenLatMin;
     public static double swedenLongMax;
     public static double swedenLatMax;
+    private GameController controller;
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,11 +80,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //Google Maps overridar typ alla events så måste ha en separat view ovanpå för att registrera touchevents
         View mapOverlay = findViewById(R.id.mapOverlay);
         mapOverlay.setOnTouchListener((v, event) -> this.onTouchEvent(event));
-        try {
-            booster = new Booster();
-        } catch (Exception e) {
-            Log.d("ERROR", e.toString());
-        }
+
     }
 
     @Override
@@ -144,12 +141,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onResume() {
         super.onResume();
         sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL);
+        if (controller != null) {
+            controller.resumeTimer();
+        }
+
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         sensorManager.unregisterListener(this);
+        if (controller != null) {
+            controller.pauseTimer();
+        }
+
     }
 
     private void startTimer() {
@@ -171,6 +176,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+
         bird = new Bird(59,18, mMap, getResources());
         LatLng swedenCenter = new LatLng(62.0, 15.0);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(bird.getBirdPos()));
@@ -189,7 +195,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Marker marker = mMap.addMarker(new AdvancedMarkerOptions()
                 .position(new LatLng(game.goalLat, game.goalLong)));
         marker.setVisible(false);
-        mDetector = new GestureDetectorCompat(this, new SwipeDetector(this, new GameController(this,scheduler,game,bird,goal,points, timer, marker)));
+        controller = new GameController(this,scheduler,game,bird,goal,points, timer, marker);
+        mDetector = new GestureDetectorCompat(this, new SwipeDetector(this, controller));
 
 
         // to acquire the magical out of bounds cords for the wrap around function for the bird

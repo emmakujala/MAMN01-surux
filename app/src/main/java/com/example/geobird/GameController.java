@@ -17,23 +17,23 @@ public class GameController {
     private final Bird bird;
     private final TextView pView;
     private final TextView gView;
-    private final TextView timer;
-
-
+    private final TextView timerView;
+    private long timeLeft;
+    private CountDownTimer timer;
     private final Marker marker;
 
     private final Activity activity;
 
-    public GameController(Activity activity, Scheduler scheduler, GamePlay game, Bird bird, TextView gView, TextView pView, TextView timer, Marker marker) {
+    public GameController(Activity activity, Scheduler scheduler, GamePlay game, Bird bird, TextView gView, TextView pView, TextView timerView, Marker marker) {
         this.scheduler = scheduler;
         this.game = game;
         this.bird = bird;
         this.pView = pView;
         this.gView = gView;
-        this.timer = timer;
+        this.timerView = timerView;
         this.activity = activity;
         this.marker = marker;
-        timer();
+        timerStart(60000);
 
     }
 
@@ -71,11 +71,12 @@ public class GameController {
 
     }
 
-   public void timer() {
-       new CountDownTimer(60000,1000) {
+   public void timerStart(long millisUntilFinished) {
+       timer = new CountDownTimer(millisUntilFinished,1000) {
            @Override
            public void onTick(long millisUntilFinished) {
-                timer.setText(Long.toString(millisUntilFinished / 1000));
+               timeLeft = millisUntilFinished;
+               timerView.setText(Long.toString(millisUntilFinished / 1000));
            }
 
            @Override
@@ -84,7 +85,16 @@ public class GameController {
                 gView.setText("Game over");
                 gameOver();
            }
-       }.start();
+       };
+       timer.start();
+   }
+
+   public void pauseTimer() {
+        timer.cancel();
+   }
+
+   public void resumeTimer() {
+        timerStart(timeLeft);
    }
 
 
