@@ -14,17 +14,17 @@ class SwipeDetector extends GestureDetector.SimpleOnGestureListener {
     private static final String DEBUG_TAG = "Gestures";
     private final int threshold = 100;
     private final int velocity_threshold = 100;
-    private final Activity main;
-    GameController controller;
+    private final Runnable onLand;
+    private final Runnable onTakeOff;
 
     /**
-     * Pass the main activity so when a swipe is detected it can land and takeoff the bird
-     * might want to rework this
+     * Takes two lambdas one to run when swipe down occurs (onLand)
+     * and one when swipe down occurs (onTakeOff)
      * */
-    public SwipeDetector(Activity main, GameController controller) {
+    public SwipeDetector(Runnable onLand, Runnable onTakeOff) {
         super();
-        this.main = main;
-        this.controller = controller;
+        this.onLand = onLand;
+        this.onTakeOff = onTakeOff;
     }
 
     @Override
@@ -47,13 +47,11 @@ class SwipeDetector extends GestureDetector.SimpleOnGestureListener {
                 if (yDiff > 0) {
                     // swiped down
                     Log.d(DEBUG_TAG, "Swiped down");
-                     controller.onLanding();
-
-
+                     onLand.run();
                 } else {
                     // swiped up
                     Log.d(DEBUG_TAG, "Swiped up");
-                    controller.onLiftOff();
+                    onTakeOff.run();
                 }
                 return true;
             }

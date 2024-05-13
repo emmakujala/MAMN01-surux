@@ -123,4 +123,8 @@ public class InfoPageActivity extends AppCompatActivity implements SensorEventLi
         Intent intent = new Intent(InfoPageActivity.this, MapsActivity.class);
         InfoPageActivity.this.startActivity(intent);
     }
+
+    public void backFunc(View v) {
+        finish();
+    }
 }

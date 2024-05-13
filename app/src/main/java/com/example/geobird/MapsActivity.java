@@ -32,8 +32,13 @@ import com.google.android.gms.maps.model.AdvancedMarkerOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 
+
 import com.google.android.gms.maps.model.Marker;
 
+import com.google.android.gms.maps.model.VisibleRegion;
+
+
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.VisibleRegion;
 
 
@@ -49,10 +54,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final float ROTATION_THRESHOLD = 1.5f;
     private final Scheduler scheduler = new Scheduler(70);
     Bird bird;
-    private CustomVibrator<String> vibe;
+    public CustomVibrator<String> vibe;
     private boolean canMove = true;
     private final Handler handler = new Handler();
     private final Executor exe = Executors.newSingleThreadScheduledExecutor();
+    private GameController gameController;
     private boolean isTimerRunning = false;
     private GamePlay game;
     private String currentGoal;
@@ -86,13 +92,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            Log.d("HERE", "DOWN");
             canMove = false;
             booster.charge();
         } else if (event.getAction() == MotionEvent.ACTION_UP) {
-            Log.d("HERE", "UP");
             canMove = true;
-            booster.release();
+            booster.release(vibe::vibrateMedium);
         }
         return mDetector.onTouchEvent(event);
     }
@@ -177,7 +181,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        bird = new Bird(59,18, mMap, getResources());
+
+
+
+        bird = new Bird(59,18, mMap, getResources(), vibe);
+
         LatLng swedenCenter = new LatLng(62.0, 15.0);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(bird.getBirdPos()));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(swedenCenter, 5)); // Adjust the zoom level as needed
@@ -195,8 +203,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Marker marker = mMap.addMarker(new AdvancedMarkerOptions()
                 .position(new LatLng(game.goalLat, game.goalLong)));
         marker.setVisible(false);
+
         controller = new GameController(this,scheduler,game,bird,goal,points, timer, marker);
-        mDetector = new GestureDetectorCompat(this, new SwipeDetector(this, controller));
+
+
+        gameController = new GameController(this, scheduler, game, bird, goal, points, timer, marker);
+        mDetector = new GestureDetectorCompat(this, new SwipeDetector(() -> gameController.onLanding(), () -> gameController.onLiftOff()));
+
 
 
         // to acquire the magical out of bounds cords for the wrap around function for the bird

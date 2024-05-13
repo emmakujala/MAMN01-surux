@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity  {
     }*/
 
     public void click(View v) {
-        Intent intent = new Intent(MainActivity.this, InfoPageActivity.class);
+        Intent intent = new Intent(MainActivity.this, GoalInfoActivity.class);
         MainActivity.this.startActivity(intent);
     }
 }
