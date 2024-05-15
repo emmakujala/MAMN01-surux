@@ -40,7 +40,7 @@
         android:shadowDx="5"
         android:shadowDy="5"
         android:shadowRadius="5"
-        android:text="Welcome! \n\nHere you can practice landing and take off\n\nTo land simply swipe downwords and you should see the bird rotat towards you\n\nTo take off simply swipe upwards and you should see the bird point away from you\n\nWhen you feel ready press next to move on"
+        android:text="Welcome! \n\nHere you can practice landing and take off\n\nTo land simply swipe downwords and you should see the bird rotate towards you\n\nTo take off simply swipe upwards and you should see the bird rotate away from you\n\nWhen you feel ready press next to move on"
         android:textAlignment="center"
         android:textColor="#FFFFFF"
         android:textSize="20sp"

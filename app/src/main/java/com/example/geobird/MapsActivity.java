@@ -86,7 +86,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //Google Maps overridar typ alla events så måste ha en separat view ovanpå för att registrera touchevents
         View mapOverlay = findViewById(R.id.mapOverlay);
         mapOverlay.setOnTouchListener((v, event) -> this.onTouchEvent(event));
-
+        try {
+            booster = new Booster();
+        } catch (Exception e) {
+            Log.d("ERROR", e.toString());
+        }
     }
 
     @Override
@@ -107,30 +111,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         float angularSpeedY = event.values[1];
         if (isReady() && canMove) {
             keepFlying(angularSpeedX, angularSpeedY);
-
-
-            /**
-            canMove = false;
-            // startTimer();
-            exe.execute(() -> {
-                try {
-                    Thread.sleep(300);
-                    canMove = true;
-                } catch (InterruptedException e) {
-                    Log.d("ERROR", "Sleep problem: " + e.getMessage());
-                }
-            });*/
-
         }
-
     }
 
     private void keepFlying(float angularSpeedX, float angularSpeedY) {
         if (
-                angularSpeedX > ROTATION_THRESHOLD ||
-                        angularSpeedX < -ROTATION_THRESHOLD ||
-                        angularSpeedY > ROTATION_THRESHOLD ||
-                        angularSpeedY < -ROTATION_THRESHOLD
+            angularSpeedX > ROTATION_THRESHOLD  ||
+            angularSpeedX < -ROTATION_THRESHOLD ||
+            angularSpeedY > ROTATION_THRESHOLD  ||
+            angularSpeedY < -ROTATION_THRESHOLD
         ) {
             String dir = DirectionMapper.direction(angularSpeedX, angularSpeedY);
             Log.d("Dir", dir);
@@ -139,8 +128,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -148,7 +135,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (controller != null) {
             controller.resumeTimer();
         }
-
     }
 
     @Override
@@ -161,29 +147,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-    private void startTimer() {
-        if (!isTimerRunning) {
-            canMove = false;
-            isTimerRunning = true;
-            handler.postDelayed(() -> {
-                isTimerRunning = false;
-                canMove = true;
-            }, 500);
-        }
-    }
-
-    private void stopTimer() {
-        handler.removeCallbacksAndMessages(null);
-        isTimerRunning = false;
-    }
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
-
-
-
         bird = new Bird(59,18, mMap, getResources(), vibe);
 
         LatLng swedenCenter = new LatLng(62.0, 15.0);
@@ -204,12 +170,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .position(new LatLng(game.goalLat, game.goalLong)));
         marker.setVisible(false);
 
-        controller = new GameController(this,scheduler,game,bird,goal,points, timer, marker);
-
-
+        controller = new GameController(this, scheduler, game, bird, goal, points, timer, marker);
         gameController = new GameController(this, scheduler, game, bird, goal, points, timer, marker);
-        mDetector = new GestureDetectorCompat(this, new SwipeDetector(() -> gameController.onLanding(), () -> gameController.onLiftOff()));
-
+        mDetector = new GestureDetectorCompat(this, new SwipeDetector(gameController::onLanding, gameController::onLiftOff));
 
 
         // to acquire the magical out of bounds cords for the wrap around function for the bird
@@ -236,7 +199,5 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {}
-
-
 }
 
